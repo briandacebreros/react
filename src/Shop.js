@@ -2,6 +2,9 @@ import React, {useState, useEffect} from 'react';
 import './App.css';
 import { Link } from 'react-router-dom';
 
+
+const apibaseurl="http://localhost:3001"
+
 function Shop() {
     useEffect(() => {
         fetchItems();
@@ -10,7 +13,7 @@ function Shop() {
     const [items, setItems] = useState([]);
 
     const fetchItems = async () => {
-        const data = await fetch ('https://pastebin.com/raw/tadxFrFL');
+        const data = await fetch (`${apibaseurl}/list`);
         const items = await data.json();
         setItems(items.results);
 
