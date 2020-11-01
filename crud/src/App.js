@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
  
-import Home from './components/Home';
-import About from './components/About';
-import Contact from './components/Contact';
-import Error from './components/Error';
-import Navigation from './components/Navigation';
-import Listing from './components/Listing';
+import Home from './pageComponents/Home';
+import About from './pageComponents/About';
+import Contact from './pageComponents/Contact';
+import Error from './pageComponents/Error';
+import Navigation from './pageComponents/Navigation';
+import Listing from './pageComponents/Listing';
+import MyDetail from './components/MyDetail';
  
 class App extends Component {
   render() {
@@ -19,7 +20,8 @@ class App extends Component {
              <Route path="/about" component={About}/>
              <Route path="/contact" component={Contact}/>
              <Route path="/listing" component={Listing}/>
-            <Route component={Error}/>
+	     <Route exact path="/detail/:id" component={MyDetail} />
+             <Route component={Error}/>
            </Switch>
         </div> 
       </BrowserRouter>

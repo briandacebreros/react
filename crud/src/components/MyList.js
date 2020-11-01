@@ -1,6 +1,7 @@
 import React from 'react';
 import dateFormat from 'dateformat';
 import ReactDOM from 'react-dom';
+import { NavLink } from 'react-router-dom';
 
 class MyList extends React.Component {
 
@@ -35,7 +36,9 @@ class MyList extends React.Component {
 			<th scope="col">[#id]</th>
 			<th scope="col">[pickup@]</th>
 			<th scope="col">[Recogida]</th>
-			<th scope="col">[Entrega]</th></tr>
+			<th scope="col">[Entrega]</th>
+			<th scope="col"></th>
+	    </tr>
 	</thead>
 	<tbody>
 	  {this.state.els.map(el=>
@@ -44,6 +47,7 @@ class MyList extends React.Component {
 	    <td>{el.horapropurecogida}</td>
 	    <td>{el.direccionremitente}</td>
 	    <td>{el.direcciondestinatario}</td>
+	    <td><NavLink to={"/detail/"+el.idexpedicion}>Detail</NavLink></td>
             </tr>
           )}
 	</tbody>
