@@ -1,59 +1,56 @@
 import React from 'react';
-import dateFormat from 'dateformat';
-import ReactDOM from 'react-dom';
 import { NavLink } from 'react-router-dom';
 
 class MyList extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-            //isLoaded: false,
-            //error: null,
-            els: []
-    };
+    this.state = { els: [] };
   }
 
   componentDidMount() {
-	let h=parseInt(dateFormat(new Date(), "HHMM"));
-	let d=dateFormat(new Date(), "dd-mm-yyyy");
-	if(h>2100)d=dateFormat(new Date(new Date().getTime()+24*60*60000), "dd-mm-yyyy");
-	let url=`https://logisticsapi.roclas.com:3002/proxy/getExpedicion?fechapropuentrega=${d}`;
-	fetch(url, {method:'GET',
-		headers: {'Authorization': 'Basic ' + 
-			btoa('reactApp:astooDificultToGuess-9F7-9u7-9.!.4456')}})
-	.then(response => response.json())
-	.then(json => this.setState({ els: json.expediciones }))
+	let url=`https://logisticsapi.roclas.com:3002/proxy/getExpedicion?entregado=0&fechapropuentrega=08-11-2020`;
+
+	fetch(url, {method:'GET',headers: {'Authorization': 'Basic ' + 
+                        btoa('reactApp:astooDificultToGuess-9F7-9u7-9.!.4456')}})
+		.then(r=>r.json())
+	   	//.then(json=>console.log(json));
+	   	.then(json=>this.setState({els:json.expediciones.map(e=>{
+			Object.keys(e).filter(f=>
+				typeof e[f] == 'object'
+				|| typeof e[f] == 'array'
+			).forEach(f=> delete e[f])
+			return e;
+		})}));
   }
 
-  render(){
-    return (
+  render(){ 
+    let fields=["idexpedicion"].concat([...Object.values(this.state.els).reduce((a,b)=>
+	    [...Object.keys(b)].reduce((ac,c)=>ac.add(c),a)
+    ,new Set())].filter(f=>f!="idexpedicion").sort());
+
+     let res=    
        <div>
-       <h1>Listing</h1>
-       <p>Listing page</p>
        <table className="table" id="deliveries">
-	<thead className="thead-dark"><tr>
-			<th scope="col">[#id]</th>
-			<th scope="col">[pickup@]</th>
-			<th scope="col">[Recogida]</th>
-			<th scope="col">[Entrega]</th>
-			<th scope="col"></th>
+        <thead className="thead-dark"><tr>
+		<th scope="col"></th>
+	  	{fields.map(f=> <th key={f} scope="col">[{f}]</th> )}
+		<th scope="col"></th>
 	    </tr>
-	</thead>
+        </thead>
 	<tbody>
-	  {this.state.els.map(el=>
-            <tr>
-	    <td>{el.idexpedicion}</td>
-	    <td>{el.horapropurecogida}</td>
-	    <td>{el.direccionremitente}</td>
-	    <td>{el.direcciondestinatario}</td>
-	    <td><NavLink to={"/detail/"+el.idexpedicion}>Detail</NavLink></td>
+	  {this.state.els.map(e=>
+	    <tr key={"tr_"+e.idexpedicion}>
+	    <td key={e[0]+"_ref"} ><NavLink to={"/detail/"+e.idexpedicion}>Detail</NavLink></td>
+	    {fields.map(f=> <td key={f+"_"+e.idexpedicion} scope="col">{e[f]}</td>)}
+	    <td key={e[0]+"_link"} ><NavLink to={"/detail/"+e.idexpedicion}>Detail</NavLink></td>
             </tr>
-          )}
+	  )}
 	</tbody>
        </table>
-       </div>
-    );
+       </div>;
+
+    return (res);
   }
 
 }
